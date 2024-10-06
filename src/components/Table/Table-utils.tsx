@@ -1,11 +1,12 @@
 import { InputRef } from 'antd'
 import { AnyObject } from 'antd/es/_util/type'
+import { TableRef } from 'antd/es/table'
 import { Search } from 'lucide-react'
-import { RefObject } from 'react'
+import { RefObject, useMemo } from 'react'
 
 import { getLocalStorage } from '@utils/localStorage'
 
-import { ColumnType, Filters, TableConfigState } from './Table-types'
+import { ColumnType, Filters, RenderHeaderParams, TableConfigState } from './Table-types'
 import { SearchDropdown } from './_components/SearchDropdown/SearchDropdown'
 
 export function loadStorage<T>(
@@ -53,6 +54,46 @@ export function getRowClassname(index: number, theme: 'light' | 'dark'): string 
 	} else {
 		return `odd-row odd-row__${theme}`
 	}
+}
+
+/**
+ * Calculate the table height based on its parent's height and the table header height, if displayed.
+ */
+export function useTableHeight(tableRef: RefObject<TableRef>, tableHeader: boolean) {
+	const tableHeight = useMemo(() => {
+		const node = tableRef.current
+		const clientRect = node?.nativeElement.getBoundingClientRect()
+
+		const top = clientRect?.top ?? 0
+		// 32 - 16 is the height of the table header minus the bottom margin
+		const height = window.innerHeight - top - 55
+
+		return tableHeader ? height - (32 - 16) : height
+	}, [tableRef, tableHeader])
+
+	return tableHeight
+}
+
+// TODO: need a fix. `computedStyleMap` is not supported in Firefox as of now
+export function getScrollX(tableRef: RefObject<TableRef>) {
+	if (tableRef.current !== null) {
+		const tableContainer = tableRef.current.nativeElement.parentElement as HTMLElement
+
+		const totalWidth = tableContainer.getBoundingClientRect().width
+		const { value: padding } = tableContainer.computedStyleMap().get('padding-left') as CSSUnitValue
+
+		return totalWidth - padding
+	}
+}
+
+export function useTableHeader(params: RenderHeaderParams) {
+	const { resetFiltersButton, showHeader, renderCallback } = params
+
+	if (!resetFiltersButton && !showHeader) {
+		return null
+	}
+
+	return <div className="schoolone-table-header">{renderCallback(resetFiltersButton)}</div>
 }
 
 /* - - - Filters Dropdowns - - - */
