@@ -3,6 +3,7 @@ import { TableProps as AntdTableProps } from 'antd'
 import { TableColumnType } from 'antd'
 import { AnyObject } from 'antd/es/_util/type'
 import { FilterValue as AntdFilterValue, SortOrder } from 'antd/es/table/interface'
+import { ReactNode } from 'react'
 
 export interface TableProps<T extends AnyObject>
 	extends Omit<AntdTableProps, 'dataSource' | 'columns' | 'onChange'> {
@@ -14,6 +15,10 @@ export interface TableProps<T extends AnyObject>
 	defaultFilters: Filters<keyof T, null>
 	/** Variables that should trigger a refetch */
 	refetchTriggers?: QueryKey
+	/** Displays a reset filters button */
+	displayResetFilters?: true
+	/** Table header render callback */
+	renderHeader?: RenderHeaderCallback
 }
 
 type DataSourceObject<T> = { totalCount: number; data: T }
@@ -32,6 +37,14 @@ export type ColumnType<T extends AnyObject> = Omit<TableColumnType<T>, 'dataInde
 }
 
 export type ColumnsType<T extends AnyObject> = Array<ColumnType<T>>
+
+export interface RenderHeaderParams {
+	resetFiltersButton: JSX.Element | null
+	showHeader: boolean
+	renderCallback: RenderHeaderCallback
+}
+
+type RenderHeaderCallback = (resetFiltersButton?: ReactNode) => ReactNode
 
 /* - - - Table config - - - */
 
