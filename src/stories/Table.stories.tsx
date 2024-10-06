@@ -17,6 +17,8 @@ export const Example: StoryObj<
 > = {
 	args: {
 		tableId: 'example',
+		displayResetFilters: true,
+		showHeader: true,
 		columns: [
 			{ dataIndex: 'id', title: 'ID' },
 			{ dataIndex: 'userId', title: 'User ID', ...getColumnSearchFilterConfig({ current: null }) },
