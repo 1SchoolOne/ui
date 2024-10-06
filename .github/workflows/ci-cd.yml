@@ -72,34 +72,53 @@ jobs:
   release:
     needs: [lint, test, build]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          fetch-depth: 0  # This ensures all tags are fetched
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
+      - name: Check Tag Presence
+        id: get-tag
+        run: |
+          TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "")
+          if [ -n "$TAG" ]; then
+            echo "tag=${TAG}" >> $GITHUB_OUTPUT
+            echo "has_tag=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tag=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Check Alpha Release
         id: check-alpha
         run: |
-          if [[ ${{ github.ref }} == *"alpha"* ]]; then
+          if [[ ${{ steps.get-tag.outputs.tag }} == *"-alpha"* ]]; then
             echo "is_alpha=true" >> $GITHUB_OUTPUT
           else
             echo "is_alpha=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Release
-        uses: comnoco/create-release-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Display warning if no tag
+        if: steps.get-tag.outputs.has_tag != 'true'
+        run: |
+          echo "::warning::No tag found for the current commit. The release will not be created."
+          echo "To create a release, please ensure you've created and pushed a tag for this commit."
+
+      - name: Use Node.js
+        if: steps.get-tag.outputs.has_tag == 'true'
+        uses: actions/setup-node@v4
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        if: steps.get-tag.outputs.has_tag == 'true'
+        with:
+          name: dist
+          path: dist 
+
+      - uses: ncipollo/release-action@v1
+        if: steps.get-tag.outputs.has_tag == 'true'
+        with:
+          tag: ${{ steps.get-tag.outputs.tag }}
           prerelease: ${{ steps.check-alpha.outputs.is_alpha }}
