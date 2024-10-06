@@ -18,6 +18,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+    - name: Debug
+      run: echo ${{ github.ref }}
     - uses: actions/checkout@v4
 
     - name: Use Node.js
