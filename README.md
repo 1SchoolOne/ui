@@ -1,50 +1,101 @@
-# React + TypeScript + Vite
+# @1schoolone/ui React Components Library
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This is a shared React component library based on Ant Design, designed to streamline development across multiple projects within SchoolOne. It provides a set of reusable, customized components that adhere to our design system and coding standards.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Installation
 
-## Expanding the ESLint configuration
+To install the library in your project, run:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install @1schoolone/ui
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+or if you're using yarn:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+yarn add @1schoolone/ui
 ```
+
+## Usage
+
+Import components from the library in your React application:
+
+```jsx
+import { Button, Card, Table } from '@myteam/react-components'
+
+function MyComponent() {
+ return (
+  <div>
+   <Button type="primary">Click me</Button>
+   <Card title="My Card">
+    <p>Card content</p>
+   </Card>
+   <Table dataSource={myData} columns={myColumns} />
+  </div>
+ )
+}
+```
+
+## Available Components
+
+Our library includes the following components:
+
+- Table
+- _More to come..._
+
+~~For detailed documentation on each component, please refer to our Storybook.~~
+
+## Customization
+
+While our components are based on Ant Design, we've customized them to fit our specific needs. You can further customize these components using our theme variables:
+
+```jsx
+import { ThemeProvider } from '@1schoolone/ui'
+
+function App() {
+ return <ThemeProvider theme={yourCustomTheme}>{/* Your app code */}</ThemeProvider>
+}
+```
+
+## Contributing
+
+We welcome contributions from team members. Please follow these steps:
+
+1. Clone the repository
+2. Create a new branch for your feature or bug fix
+3. Make your changes and write tests if necessary
+4. Submit a pull request for review
+
+## Development
+
+To set up the development environment:
+
+1. Clone the repository
+2. Run `yarn install`
+3. Start the development server with or `yarn storybook`
+
+## Testing
+
+Run tests with:
+
+```bash
+yarn test
+```
+
+## Building
+
+To build the library for production:
+
+```bash
+yarn build
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Support
+
+For any questions or issues, please contact the maintainers or open an issue in the repository.
