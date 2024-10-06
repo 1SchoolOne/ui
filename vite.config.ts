@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
@@ -10,6 +11,10 @@ const peerDependencies = Object.keys(pkg.peerDependencies)
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [react(), dts({ tsconfigPath: './tsconfig.app.json' })],
+	test: {
+		dir: 'src',
+		globals: true,
+	},
 	resolve: {
 		alias: {
 			'@components': resolve(__dirname, './src/components'),
