@@ -111,14 +111,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - uses: actions/download-artifact@v4
-        if: steps.get-tag.outputs.has_tag == 'true'
-        with:
-          name: dist
-          path: dist 
-
       - uses: ncipollo/release-action@v1
         if: steps.get-tag.outputs.has_tag == 'true'
         with:
+          token: ${{ secrets.RELEASE_TOKEN }}
           tag: ${{ steps.get-tag.outputs.tag }}
           prerelease: ${{ steps.check-alpha.outputs.is_alpha }}
