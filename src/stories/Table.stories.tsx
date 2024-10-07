@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Table } from '@components'
 
-import { getColumnSearchFilterConfig } from '../components/Table/Table-utils'
+import { getSearchFilterConfig } from '../components/Table/Table-utils'
 
 const meta: Meta<typeof Table> = {
 	title: 'Components/Table',
@@ -21,9 +21,9 @@ export const Example: StoryObj<
 		showHeader: true,
 		columns: [
 			{ dataIndex: 'id', title: 'ID' },
-			{ dataIndex: 'userId', title: 'User ID', ...getColumnSearchFilterConfig({ current: null }) },
-			{ dataIndex: 'title', title: 'Title', ...getColumnSearchFilterConfig({ current: null }) },
-			{ dataIndex: 'body', title: 'Body', ...getColumnSearchFilterConfig({ current: null }) },
+			{ dataIndex: 'userId', title: 'User ID', ...getSearchFilterConfig({ current: null }) },
+			{ dataIndex: 'title', title: 'Title', ...getSearchFilterConfig({ current: null }) },
+			{ dataIndex: 'body', title: 'Body', ...getSearchFilterConfig({ current: null }) },
 		],
 		dataSource: async (filters, sorter, pagination, currentPage) => {
 			const filterQuery = `${filters?.id ? '&id=' + filters.id : ''}${filters?.userId ? '&userId=' + filters.userId : ''}${filters?.title ? '&title_like=' + filters.title : ''}${filters?.body ? '&body_like=' + filters.body : ''}`

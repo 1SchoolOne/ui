@@ -36,6 +36,16 @@ export type ColumnType<T extends AnyObject> = Omit<TableColumnType<T>, 'dataInde
 	dataIndex: Extract<keyof T, string>
 }
 
+export type ColumnFilterType<T extends AnyObject> = Pick<
+	ColumnType<T>,
+	'filterDropdown' | 'filterIcon' | 'onFilterDropdownOpenChange'
+>
+
+export type ColumnStaticFilterType<T extends AnyObject> = Pick<
+	ColumnType<T>,
+	'filterDropdown' | 'filterIcon' | 'onFilterDropdownOpenChange' | 'onFilter'
+>
+
 export type ColumnsType<T extends AnyObject> = Array<ColumnType<T>>
 
 export interface RenderHeaderParams {

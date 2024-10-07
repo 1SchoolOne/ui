@@ -49,7 +49,13 @@ export function Table<T extends AnyObject>(props: TableProps<T>) {
 	)
 	const tableHeight = useTableHeight(tableRef, !!displayResetFilters)
 	const tableHeader = useTableHeader({
-		resetFiltersButton: displayResetFilters ? <ResetFiltersButton onClick={() => {}} /> : null,
+		resetFiltersButton: displayResetFilters ? (
+			<ResetFiltersButton
+				onClick={() => {
+					setTableConfig((prev) => ({ ...prev, filters: defaultFilters }))
+				}}
+			/>
+		) : null,
 		showHeader: showHeader ?? false,
 		renderCallback: renderHeader,
 	})

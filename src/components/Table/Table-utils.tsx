@@ -6,7 +6,17 @@ import { RefObject, useMemo } from 'react'
 
 import { getLocalStorage } from '@utils/localStorage'
 
-import { ColumnType, Filters, RenderHeaderParams, TableConfigState } from './Table-types'
+import {
+	ColumnFilterType,
+	ColumnStaticFilterType,
+	Filters,
+	RenderHeaderParams,
+	TableConfigState,
+} from './Table-types'
+import {
+	RadioOrCheckboxDropdown,
+	RadioOrCheckboxOption,
+} from './_components/RadioOrCheckboxDropdown/RadioOrCheckboxDropdown'
 import { SearchDropdown } from './_components/SearchDropdown/SearchDropdown'
 
 export function loadStorage<T>(
@@ -99,12 +109,12 @@ export function useTableHeader(params: RenderHeaderParams) {
 /* - - - Filters Dropdowns - - - */
 
 /**
- * To be used only when the data source of the table is dynamic. You should handle the filtering and
+ * WARN: To be used only when the data source of the table is dynamic. You should handle the filtering and
  * sorting yourself with the API and the table's onChange props.
  */
-export function getColumnSearchFilterConfig<T extends AnyObject>(
+export function getSearchFilterConfig<T extends AnyObject>(
 	inputRef: RefObject<InputRef>,
-): Omit<ColumnType<T>, 'dataIndex'> {
+): ColumnFilterType<T> {
 	// Even though selectedKeys is used as an array, it corresponds to the current
 	// filter value. It allows to have a controlled input value without declaring
 	// a state ourselves.
@@ -128,5 +138,108 @@ export function getColumnSearchFilterConfig<T extends AnyObject>(
 				}, 100)
 			}
 		},
+	}
+}
+
+/**
+ * WARN: To be used only when the data source of the table is static. It handles the filtering process.
+ */
+export function getStaticSearchFilterConfig<T extends AnyObject>({
+	dataIndex,
+	inputRef,
+}: {
+	dataIndex: Extract<keyof T, string>
+	inputRef: RefObject<InputRef>
+}): ColumnStaticFilterType<T> {
+	const baseConfig = getSearchFilterConfig(inputRef)
+
+	return {
+		...baseConfig,
+		onFilter: (value, record) => {
+			const recordValue = record[dataIndex]
+
+			if (typeof value !== 'boolean') {
+				return String(recordValue).toLowerCase().includes(String(value).toLowerCase())
+			}
+
+			return recordValue === value
+		},
+	}
+}
+
+/**
+ * WARN: To be used only when the data source of the table is dynamic. You should handle the filtering and
+ * sorting yourself with the API and the table's onChange props.
+ */
+export function getRadioFilterConfig<T extends AnyObject>(
+	options: Array<RadioOrCheckboxOption>,
+): ColumnFilterType<T> {
+	return {
+		filterDropdown: ({ confirm, clearFilters, selectedKeys, setSelectedKeys }) => (
+			<RadioOrCheckboxDropdown
+				options={options}
+				selectedKeys={selectedKeys}
+				setSelectedKeys={setSelectedKeys}
+				clearFilters={clearFilters}
+				confirm={confirm}
+			/>
+		),
+	}
+}
+
+/**
+ * WARN: To be used only when the data source of the table is static. It handles the filtering process.
+ */
+export function getStaticRadioFilterConfig<T extends AnyObject>({
+	dataIndex,
+	options,
+}: {
+	dataIndex: Extract<keyof T, string>
+	options: Array<RadioOrCheckboxOption>
+}): ColumnStaticFilterType<T> {
+	const baseConfig = getRadioFilterConfig(options)
+
+	return {
+		...baseConfig,
+		onFilter: (value, record) => record[dataIndex] === value,
+	}
+}
+
+/**
+ * WARN: To be used only when the data source of the table is dynamic. You should handle the filtering and
+ * sorting yourself with the API and the table's onChange props.
+ */
+export function getCheckboxFilterConfig<T extends AnyObject>(
+	options: Array<RadioOrCheckboxOption>,
+): ColumnFilterType<T> {
+	return {
+		filterDropdown: ({ confirm, clearFilters, selectedKeys, setSelectedKeys }) => (
+			<RadioOrCheckboxDropdown
+				useCheckbox={true}
+				options={options}
+				selectedKeys={selectedKeys}
+				setSelectedKeys={setSelectedKeys}
+				clearFilters={clearFilters}
+				confirm={confirm}
+			/>
+		),
+	}
+}
+
+/**
+ * WARN: To be used only when the data source of the table is static. It handles the filtering process.
+ */
+export function getStaticCheckboxFilterConfig<T extends AnyObject>({
+	dataIndex,
+	options,
+}: {
+	dataIndex: Extract<keyof T, string>
+	options: Array<RadioOrCheckboxOption>
+}): ColumnStaticFilterType<T> {
+	const baseConfig = getRadioFilterConfig(options)
+
+	return {
+		...baseConfig,
+		onFilter: (value, record) => record[dataIndex] === value,
 	}
 }
