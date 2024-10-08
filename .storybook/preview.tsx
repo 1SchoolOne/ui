@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { ThemeProvider } from '@components'
+import { ThemeProvider } from '../src/components'
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 0 } } })
 
