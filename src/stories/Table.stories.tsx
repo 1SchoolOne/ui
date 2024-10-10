@@ -12,19 +12,21 @@ const meta: Meta<typeof Table> = {
 
 export default meta
 
+const columns = [
+	{ dataIndex: 'id', title: 'ID' },
+	{ dataIndex: 'userId', title: 'User ID', ...getSearchFilterConfig({ current: null }) },
+	{ dataIndex: 'title', title: 'Title', ...getSearchFilterConfig({ current: null }) },
+	{ dataIndex: 'body', title: 'Body', ...getSearchFilterConfig({ current: null }) },
+] as const
+
 export const Example: StoryObj<
-	typeof Table<{ id: number; userId: number; title: string; body: string }>
+	typeof Table<{ id: number; userId: number; title: string; body: string }, typeof columns>
 > = {
 	args: {
 		tableId: 'example',
 		displayResetFilters: true,
 		showHeader: true,
-		columns: [
-			{ dataIndex: 'id', title: 'ID' },
-			{ dataIndex: 'userId', title: 'User ID', ...getSearchFilterConfig({ current: null }) },
-			{ dataIndex: 'title', title: 'Title', ...getSearchFilterConfig({ current: null }) },
-			{ dataIndex: 'body', title: 'Body', ...getSearchFilterConfig({ current: null }) },
-		],
+		columns,
 		dataSource: async (filters, sorter, pagination, currentPage) => {
 			const filterQuery = `${filters?.id ? '&id=' + filters.id : ''}${filters?.userId ? '&userId=' + filters.userId : ''}${filters?.title ? '&title_like=' + filters.title : ''}${filters?.body ? '&body_like=' + filters.body : ''}`
 			const sorterQuery = sorter ? '&_sort=' + sorter.field : '&_sort=id'
@@ -45,6 +47,9 @@ export const Example: StoryObj<
 			userId: null,
 			title: null,
 			body: null,
+		},
+		globalSearchConfig: {
+			searchedFields: ['User ID', 'Title', 'Body'],
 		},
 	},
 }

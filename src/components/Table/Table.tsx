@@ -9,11 +9,13 @@ import { useTheme } from '@components'
 import { useLocalStorage } from '@utils/localStorage'
 
 import { DEFAULT_PAGE_SIZE_OPTIONS } from './Table-constants'
-import { Filters, TableConfigState, TableProps } from './Table-types'
+import { ColumnType, ColumnsType, Filters, TableConfigState, TableProps } from './Table-types'
 import {
+	defaultRenderHeaderCallback,
 	generateRowKey,
 	getRowClassname,
 	loadStorage,
+	useGlobalSearch,
 	useTableHeader,
 	useTableHeight,
 } from './Table-utils'
@@ -23,7 +25,9 @@ import './Table-styles.less'
 
 const { useBreakpoint } = Grid
 
-export function Table<T extends AnyObject>(props: TableProps<T>) {
+export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
+	props: TableProps<T, C>,
+) {
 	const {
 		tableId,
 		columns,
@@ -35,7 +39,8 @@ export function Table<T extends AnyObject>(props: TableProps<T>) {
 		locale,
 		displayResetFilters,
 		showHeader,
-		renderHeader = (resetFiltersButton) => <>{resetFiltersButton}</>,
+		renderHeader = defaultRenderHeaderCallback,
+		globalSearchConfig,
 		...restProps
 	} = props
 
@@ -43,6 +48,10 @@ export function Table<T extends AnyObject>(props: TableProps<T>) {
 	const { theme } = useTheme()
 	const screens = useBreakpoint()
 	const tableRef = useRef<TableRef>(null)
+	const { globalSearchInput, globalSearchValue } = useGlobalSearch<T, C>({
+		...globalSearchConfig,
+		searchedFields: globalSearchConfig?.searchedFields ?? [],
+	})
 	const [currentPage, setCurrentPage] = useState(1)
 	const [tableConfig, setTableConfig] = useState<TableConfigState<T>>(
 		loadStorage<T>(tableId, defaultFilters),
@@ -56,6 +65,7 @@ export function Table<T extends AnyObject>(props: TableProps<T>) {
 				}}
 			/>
 		) : null,
+		globalSearchInput,
 		showHeader: showHeader ?? false,
 		renderCallback: renderHeader,
 	})
@@ -67,6 +77,7 @@ export function Table<T extends AnyObject>(props: TableProps<T>) {
 				filters: tableConfig.filters,
 				sorter: tableConfig.sorter,
 				pagination: { ...tableConfig.pagination, currentPage },
+				globalSearch: globalSearchValue,
 			},
 			...refetchTriggers,
 		],
@@ -84,7 +95,7 @@ export function Table<T extends AnyObject>(props: TableProps<T>) {
 		},
 	})
 
-	const cols: typeof columns = useMemo(
+	const cols: ColumnsType<T> = useMemo(
 		() =>
 			columns.map((col) => ({
 				...col,

@@ -2,17 +2,21 @@ import { InputRef } from 'antd'
 import { AnyObject } from 'antd/es/_util/type'
 import { TableRef } from 'antd/es/table'
 import { Search } from 'lucide-react'
-import { RefObject, useMemo } from 'react'
+import { ReactNode, RefObject, useMemo, useState } from 'react'
 
 import { getLocalStorage } from '@utils/localStorage'
+import { useDebounce } from '@utils/useDebounce'
 
 import {
 	ColumnFilterType,
 	ColumnStaticFilterType,
+	ColumnType,
 	Filters,
 	RenderHeaderParams,
 	TableConfigState,
+	UseGlobalSearchParams,
 } from './Table-types'
+import { GlobalSearch } from './_components/GlobalSearch/GlobalSearch'
 import {
 	RadioOrCheckboxDropdown,
 	RadioOrCheckboxOption,
@@ -97,13 +101,53 @@ export function getScrollX(tableRef: RefObject<TableRef>) {
 }
 
 export function useTableHeader(params: RenderHeaderParams) {
-	const { resetFiltersButton, showHeader, renderCallback } = params
+	const { resetFiltersButton, globalSearchInput, showHeader, renderCallback } = params
 
-	if (!resetFiltersButton && !showHeader) {
+	if (!showHeader || (!resetFiltersButton && !globalSearchInput)) {
 		return null
 	}
 
-	return <div className="schoolone-table-header">{renderCallback(resetFiltersButton)}</div>
+	return (
+		<div className="schoolone-table-header">
+			{renderCallback(resetFiltersButton, globalSearchInput)}
+		</div>
+	)
+}
+
+export function useGlobalSearch<T extends AnyObject, C extends readonly ColumnType<T>[]>(
+	params: UseGlobalSearchParams<T, C> | undefined,
+): {
+	globalSearchInput: ReactNode
+	globalSearchValue: string
+} {
+	const [value, setValue] = useState('')
+	const debouncedValue = useDebounce(value, params?.debounceDelay ?? 750)
+
+	if (!params) {
+		return {
+			globalSearchInput: null,
+			globalSearchValue: '',
+		}
+	}
+
+	return {
+		globalSearchInput: (
+			<GlobalSearch searchedFields={params.searchedFields} value={value} onChange={setValue} />
+		),
+		globalSearchValue: debouncedValue,
+	}
+}
+
+export function defaultRenderHeaderCallback(
+	resetFiltersButton?: ReactNode,
+	globalSearchInput?: ReactNode,
+) {
+	return (
+		<>
+			{globalSearchInput}
+			{resetFiltersButton}
+		</>
+	)
 }
 
 /* - - - Filters Dropdowns - - - */

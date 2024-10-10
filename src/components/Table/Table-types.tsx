@@ -5,13 +5,13 @@ import { AnyObject } from 'antd/es/_util/type'
 import { FilterValue as AntdFilterValue, SortOrder } from 'antd/es/table/interface'
 import { ReactNode } from 'react'
 
-export interface TableProps<T extends AnyObject>
+export interface TableProps<T extends AnyObject, C extends readonly ColumnType<T>[]>
 	extends Omit<AntdTableProps, 'dataSource' | 'columns' | 'onChange'> {
 	tableId: string
 	/** Either static data or a promise that returns the desired data */
 	dataSource: DataSource<T>
-	columns: ColumnsType<T>
-	/** Initial filters values */
+	columns: C
+	/** Initial filters values. You should set only the values for the fields that are filterable. */
 	defaultFilters: Filters<keyof T, null>
 	/** Variables that should trigger a refetch */
 	refetchTriggers?: QueryKey
@@ -19,6 +19,15 @@ export interface TableProps<T extends AnyObject>
 	displayResetFilters?: true
 	/** Table header render callback */
 	renderHeader?: RenderHeaderCallback
+	/** Disabled by default. Configuring the global search enables it automatically. Default debounce delay = 750ms */
+	globalSearchConfig?: {
+		searchedFields: Array<ExtractTitles<C>>
+		/**
+		 * In milliseconds
+		 * @default 750
+		 */
+		debounceDelay?: number
+	}
 }
 
 type DataSourceObject<T> = { totalCount: number; data: T }
@@ -32,8 +41,9 @@ type DataSource<T> =
 			currentPage: number,
 	  ) => Promise<DataSourceObject<Array<T>>>)
 
-export type ColumnType<T extends AnyObject> = Omit<TableColumnType<T>, 'dataIndex'> & {
+export type ColumnType<T extends AnyObject> = Omit<TableColumnType<T>, 'dataIndex' | 'title'> & {
 	dataIndex: Extract<keyof T, string>
+	title: string
 }
 
 export type ColumnFilterType<T extends AnyObject> = Pick<
@@ -49,12 +59,19 @@ export type ColumnStaticFilterType<T extends AnyObject> = Pick<
 export type ColumnsType<T extends AnyObject> = Array<ColumnType<T>>
 
 export interface RenderHeaderParams {
-	resetFiltersButton: JSX.Element | null
+	resetFiltersButton: ReactNode
+	globalSearchInput: ReactNode
 	showHeader: boolean
 	renderCallback: RenderHeaderCallback
 }
 
-type RenderHeaderCallback = (resetFiltersButton?: ReactNode) => ReactNode
+type RenderHeaderCallback = (
+	resetFiltersButton?: ReactNode,
+	globalSearchInput?: ReactNode,
+) => ReactNode
+
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ExtractTitles<C extends readonly ColumnType<any>[]> = Extract<C[number]['title'], string>
 
 /* - - - Table config - - - */
 
@@ -75,4 +92,11 @@ export interface Sorter<T> {
 
 export interface Pagination {
 	size: number
+}
+
+/* - - - Utils - - - */
+
+export interface UseGlobalSearchParams<T extends AnyObject, C extends readonly ColumnType<T>[]> {
+	searchedFields: Array<ExtractTitles<C>>
+	debounceDelay?: number
 }
