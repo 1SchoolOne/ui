@@ -92,6 +92,7 @@ jobs:
 
       - name: Check Alpha Release
         id: check-alpha
+        if: steps.get-tag.outputs.has_tag == 'true'
         run: |
           if [[ ${{ steps.get-tag.outputs.tag }} == *"-alpha"* ]]; then
             echo "is_alpha=true" >> $GITHUB_OUTPUT
