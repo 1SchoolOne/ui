@@ -43,9 +43,10 @@ function MyComponent() {
 Our library includes the following components:
 
 - Table
+- Info
 - _More to come..._
 
-~~For detailed documentation on each component, please refer to our Storybook.~~
+For detailed documentation on each component, please refer to our [Storybook](https://1schoolone.github.io/ui/).
 
 ## Customization
 
