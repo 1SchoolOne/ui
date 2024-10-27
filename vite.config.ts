@@ -20,6 +20,7 @@ export default defineConfig({
 			'@components': resolve(__dirname, './src/components'),
 			'@utils': resolve(__dirname, './src/utils'),
 			'@types': resolve(__dirname, './src/types'),
+			'@public': resolve(__dirname, './public'),
 		},
 	},
 	build: {
