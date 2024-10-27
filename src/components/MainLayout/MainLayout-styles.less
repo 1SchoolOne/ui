@@ -1,0 +1,42 @@
+.schoolone-main-layout {
+	height: 100%;
+
+	&__sider {
+		&__header {
+			margin: var(--ant-margin) 0;
+			height: 50px;
+
+			> img {
+				display: block;
+				height: 100%;
+				object-fit: contain;
+				margin: 0 auto;
+			}
+		}
+
+		&__menu {
+			.ant-menu-submenu-selected {
+				> .ant-menu-submenu-title {
+					color: var(--ant-color-primary-text);
+				}
+			}
+		}
+	}
+
+	&__header {
+		background-color: var(--ant-bg);
+	}
+
+	&__content {
+		padding: var(--ant-padding) 0;
+	}
+}
+
+// When the sidebar is collapsed, the submenus are rendered in a popup outside the root
+.ant-menu.ant-menu-submenu-popup {
+	.ant-menu-submenu-selected {
+		> .ant-menu-submenu-title {
+			color: var(--ant-color-primary-text);
+		}
+	}
+}
