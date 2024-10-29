@@ -1,3 +1,4 @@
+export { AuthLayout } from './AuthLayout/AuthLayout'
 export { Info } from './Info/Info'
 export { MainLayout } from './MainLayout/MainLayout'
 export { Table } from './Table/Table'
