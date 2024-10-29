@@ -24,7 +24,8 @@
 			"@components": ["./src/components/index.ts"],
 			"@utils/*": ["./src/utils/*"],
 			"@types": ["./src/types/index.ts"],
-			"@public/*": ["./public/*"]
+			"@public/*": ["./public/*"],
+			"@assets/*": ["./src/assets/*"]
 		}
 	},
 	"include": ["src"]
