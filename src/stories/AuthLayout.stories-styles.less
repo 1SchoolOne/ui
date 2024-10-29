@@ -1,0 +1,39 @@
+.schoolone-auth-layout {
+	h1 {
+		margin: 0;
+	}
+
+	&__hero-panel {
+		&:has(.example-story) {
+			border: 2px dashed var(--ant-color-info);
+			color: var(--ant-color-info-text);
+		}
+
+		&__content {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
+	&__main-panel {
+		&:has(.example-story) {
+			border: 2px dashed var(--ant-color-primary);
+			color: var(--ant-color-primary-text);
+		}
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.login-hero-content {
+	padding: 0 var(--ant-padding);
+
+	h1,
+	p,
+	div {
+		color: var(--ant-color-text-light-solid);
+	}
+}
