@@ -1,9 +1,9 @@
 import { Col, Row } from 'antd'
 import { ReactNode } from 'react'
 
-import meshGradient from '@assets/brand-mesh-gradient.png'
-
 import './AuthLayout-styles.less'
+
+const meshGradientUrl = new URL('../../assets/brand-mesh-gradient.png', import.meta.url).href
 
 interface PanelSpan {
 	xs: number
@@ -46,7 +46,7 @@ export function AuthLayout(props: AuthLayoutProps) {
 				<div className="schoolone-auth-layout__hero-panel__content">{heroPanel}</div>
 				<img
 					className="schoolone-auth-layout__hero-panel__bg"
-					src={meshGradient}
+					src={meshGradientUrl}
 					alt="brand mesh gradient"
 				/>
 			</Col>
