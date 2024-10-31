@@ -21,7 +21,6 @@ export default defineConfig({
 			'@utils': resolve(__dirname, './src/utils'),
 			'@types': resolve(__dirname, './src/types'),
 			'@public': resolve(__dirname, './public'),
-			'@assets': resolve(__dirname, './src/assets'),
 		},
 	},
 	build: {
