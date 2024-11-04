@@ -25,5 +25,13 @@
 			"@public/*": ["./public/*"]
 		}
 	},
-	"include": ["vite.config.ts"]
+	"include": ["vite.config.ts"],
+	"exclude": [
+		"**/*.test.ts",
+		"**/*.test.tsx",
+		"**/*.spec.ts",
+		"**/*.spec.tsx",
+		"**/__tests/**",
+		"**/*.stories.tsx"
+	]
 }

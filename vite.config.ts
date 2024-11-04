@@ -10,7 +10,7 @@ const peerDependencies = Object.keys(pkg.peerDependencies)
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react(), dts({ tsconfigPath: './tsconfig.app.json', exclude: ['**/*.stories.tsx'] })],
+	plugins: [react(), dts({ tsconfigPath: './tsconfig.app.json' })],
 	test: {
 		dir: 'src',
 		globals: true,
@@ -24,7 +24,7 @@ export default defineConfig({
 		},
 	},
 	build: {
-		copyPublicDir: false,
+		assetsInlineLimit: 0,
 		emptyOutDir: true,
 		cssMinify: false,
 		cssCodeSplit: false,
