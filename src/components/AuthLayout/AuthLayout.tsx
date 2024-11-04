@@ -1,9 +1,9 @@
 import { Col, Row } from 'antd'
 import { ReactNode } from 'react'
 
-import './AuthLayout-styles.less'
+import meshGradientUrl from '../../assets/brand-mesh-gradient.png'
 
-const meshGradientUrl = new URL('../../assets/brand-mesh-gradient.png', import.meta.url).href
+import './AuthLayout-styles.less'
 
 interface PanelSpan {
 	xs: number
