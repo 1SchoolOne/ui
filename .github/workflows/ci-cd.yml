@@ -80,6 +80,11 @@ jobs:
         with:
           fetch-depth: 0  # This ensures all tags are fetched
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
       - name: Check Tag Presence
         id: get-tag
         run: |
@@ -108,13 +113,13 @@ jobs:
           echo "To create a release, please ensure you've created and pushed a tag for this commit."
 
       - name: Use Node.js
-        if: steps.get-tag.outputs.has_tag == 'true'
+        if: steps.get-tag.outputs.has_tag == 'true' && steps.extract_branch.outputs.branch == "master"
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - uses: ncipollo/release-action@v1
-        if: steps.get-tag.outputs.has_tag == 'true'
+        if: steps.get-tag.outputs.has_tag == 'true'  && steps.extract_branch.outputs.branch == "master"
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
           tag: ${{ steps.get-tag.outputs.tag }}
