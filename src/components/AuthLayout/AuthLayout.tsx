@@ -1,8 +1,6 @@
 import { Col, Row } from 'antd'
 import { ReactNode } from 'react'
 
-import meshGradientUrl from '../../assets/brand-mesh-gradient.png'
-
 import './AuthLayout-styles.less'
 
 interface PanelSpan {
@@ -35,20 +33,24 @@ const rightPanelSpan: PanelSpan = {
 interface AuthLayoutProps {
 	children: ReactNode
 	heroPanel?: ReactNode
+	/** This is used as source on an <img /> tag */
+	heroBackgroundSrc?: string
 }
 
 export function AuthLayout(props: AuthLayoutProps) {
-	const { heroPanel, children } = props
+	const { heroPanel, heroBackgroundSrc, children } = props
 
 	return (
 		<Row className="schoolone-auth-layout">
 			<Col className="schoolone-auth-layout__hero-panel" {...leftPanelSpan}>
 				<div className="schoolone-auth-layout__hero-panel__content">{heroPanel}</div>
-				<img
-					className="schoolone-auth-layout__hero-panel__bg"
-					src={meshGradientUrl}
-					alt="brand mesh gradient"
-				/>
+				{heroBackgroundSrc && (
+					<img
+						className="schoolone-auth-layout__hero-panel__bg"
+						src={heroBackgroundSrc}
+						alt="brand mesh gradient"
+					/>
+				)}
 			</Col>
 			<Col className="schoolone-auth-layout__main-panel" {...rightPanelSpan}>
 				{children}

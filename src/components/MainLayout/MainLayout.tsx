@@ -12,6 +12,8 @@ import { SIDEBAR_STORAGE_KEY, loadStorage } from './MainLayout-utils'
 
 import './MainLayout-styles.less'
 
+const schoolOneLogoUrl = new URL('../../assets/schoolone-logo-white.svg', import.meta.url).href
+
 interface MainLayoutProps {
 	className?: string
 	sidebarHeader?: ReactNode
@@ -56,11 +58,7 @@ export function MainLayout(props: MainLayoutProps) {
 				trigger={isCollapsed ? <OpenSidebarIcon size={16} /> : <CloseSidebarIcon size={16} />}
 			>
 				<div className="schoolone-main-layout__sider__header">
-					{sidebarHeader ? (
-						sidebarHeader
-					) : (
-						<img src="/schoolone-logo-white.svg" alt="SchoolOne logo" />
-					)}
+					{sidebarHeader ? sidebarHeader : <img src={schoolOneLogoUrl} alt="SchoolOne logo" />}
 				</div>
 				<Menu
 					className={classnames('schoolone-main-layout__sider__menu', sidebarMenuClassName)}
