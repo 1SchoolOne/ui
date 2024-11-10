@@ -6,6 +6,7 @@ import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useTheme } from '@components'
+
 import { useLocalStorage } from '@utils/localStorage'
 
 import { DEFAULT_PAGE_SIZE_OPTIONS } from './Table-constants'
