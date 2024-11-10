@@ -113,13 +113,14 @@ jobs:
           echo "To create a release, please ensure you've created and pushed a tag for this commit."
 
       - name: Use Node.js
-        if: steps.get-tag.outputs.has_tag == 'true' && steps.extract_branch.outputs.branch == 'master'
+        if: steps.get-tag.outputs.has_tag == 'true' && (steps.extract_branch.outputs.branch == 'master' || steps.check-alpha.outputs.is_alpha)
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - uses: ncipollo/release-action@v1
-        if: steps.get-tag.outputs.has_tag == 'true'  && steps.extract_branch.outputs.branch == 'master'
+      - name: Release
+        uses: ncipollo/release-action@v1
+        if: steps.get-tag.outputs.has_tag == 'true'  && (steps.extract_branch.outputs.branch == 'master' || steps.check-alpha.outputs.is_alpha)
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
           tag: ${{ steps.get-tag.outputs.tag }}
