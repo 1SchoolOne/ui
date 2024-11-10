@@ -8,11 +8,10 @@ import { ReactNode, useEffect, useState } from 'react'
 
 import { useLocalStorage } from '@utils/localStorage'
 
+import schoolOneLogoUrl from '../../assets/schoolone-logo-white.svg'
 import { SIDEBAR_STORAGE_KEY, loadStorage } from './MainLayout-utils'
 
 import './MainLayout-styles.less'
-
-const schoolOneLogoUrl = new URL('../../assets/schoolone-logo-white.svg', import.meta.url).href
 
 interface MainLayoutProps {
 	className?: string
