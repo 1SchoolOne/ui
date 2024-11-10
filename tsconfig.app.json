@@ -28,12 +28,5 @@
 		}
 	},
 	"include": ["src"],
-	"exclude": [
-		"**/*.test.ts",
-		"**/*.test.tsx",
-		"**/*.spec.ts",
-		"**/*.spec.tsx",
-		"**/__tests/**",
-		"**/*.stories.tsx"
-	]
+	"exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/__tests/**"]
 }
