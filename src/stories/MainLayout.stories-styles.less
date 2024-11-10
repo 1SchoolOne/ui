@@ -19,3 +19,31 @@
 		color: var(--ant-color-info-text);
 	}
 }
+
+.schoolone-main-layout__sider {
+	&--collapsed {
+		.schoolone-main-layout__sider__footer {
+			opacity: 0;
+		}
+	}
+
+	.ant-layout-sider-children {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__footer {
+		margin-top: auto;
+		opacity: 1;
+		transition: opacity 150ms ease-in-out;
+
+		.ant-space {
+			width: 100%;
+		}
+
+		.ant-typography {
+			color: var(--ant-color-text-light-solid);
+			opacity: 0.8;
+		}
+	}
+}

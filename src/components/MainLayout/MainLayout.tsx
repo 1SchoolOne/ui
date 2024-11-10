@@ -16,6 +16,7 @@ import './MainLayout-styles.less'
 interface MainLayoutProps {
 	className?: string
 	sidebarHeader?: ReactNode
+	sidebarFooter?: ReactNode
 	sidebarProps?: Omit<SiderProps, 'collapsed' | 'onCollapse' | 'trigger'>
 	sidebarMenuProps?: MenuProps
 	headerClassName?: string
@@ -28,6 +29,7 @@ export function MainLayout(props: MainLayoutProps) {
 	const {
 		className,
 		sidebarHeader,
+		sidebarFooter,
 		sidebarProps = {},
 		sidebarMenuProps = {},
 		headerClassName,
@@ -51,7 +53,11 @@ export function MainLayout(props: MainLayoutProps) {
 				width={200}
 				collapsible
 				{...sidebarProps}
-				className={classnames('schoolone-main-layout__sider', sidebarClassName)}
+				className={classnames(
+					'schoolone-main-layout__sider',
+					{ 'schoolone-main-layout__sider--collapsed': isCollapsed },
+					sidebarClassName,
+				)}
 				collapsed={isCollapsed}
 				onCollapse={() => setIsCollapsed((prev) => !prev)}
 				trigger={isCollapsed ? <OpenSidebarIcon size={16} /> : <CloseSidebarIcon size={16} />}
@@ -65,6 +71,9 @@ export function MainLayout(props: MainLayoutProps) {
 					mode="inline"
 					{...restSidebarMenuProps}
 				/>
+				{sidebarFooter && (
+					<div className="schoolone-main-layout__sider__footer">{sidebarFooter}</div>
+				)}
 			</Layout.Sider>
 			<Layout>
 				<Layout.Header className={classnames('schoolone-main-layout__header', headerClassName)}>

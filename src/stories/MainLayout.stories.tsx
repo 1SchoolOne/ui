@@ -1,21 +1,23 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { Space, Typography } from 'antd'
 import { EllipsisVertical, Grip, GripVertical, IceCreamCone, Menu } from 'lucide-react'
 
 import { MainLayout } from '@components'
+
+import { version as packageVersion } from '../../package.json'
 
 import './MainLayout.stories-styles.less'
 
 const meta: Meta<typeof MainLayout> = {
 	title: 'Components/Main Layout',
 	component: MainLayout,
-	tags: ['autodocs'],
 }
 
 export default meta
 
 type Story = StoryObj<typeof MainLayout>
 
-export const SimpleExample: Story = {
+export const Example: Story = {
 	args: {
 		sidebarMenuProps: {
 			items: [
@@ -48,6 +50,12 @@ export const SimpleExample: Story = {
 				{ key: 'item-3', label: 'Item 3', icon: <Grip size={16} /> },
 			],
 		},
+		sidebarFooter: (
+			<Space direction="vertical" align="center">
+				<Typography.Text>@1schoolone/ui</Typography.Text>
+				<Typography.Text>v{packageVersion}</Typography.Text>
+			</Space>
+		),
 		header: <h1>Header</h1>,
 		children: <h1>Content</h1>,
 	},
