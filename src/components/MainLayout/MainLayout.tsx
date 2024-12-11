@@ -44,7 +44,7 @@ export function MainLayout(props: MainLayoutProps) {
 	const storage = useLocalStorage()
 
 	useEffect(() => {
-		storage.set({ key: SIDEBAR_STORAGE_KEY, data: isCollapsed })
+		storage.set(SIDEBAR_STORAGE_KEY, isCollapsed)
 	}, [storage, isCollapsed])
 
 	return (

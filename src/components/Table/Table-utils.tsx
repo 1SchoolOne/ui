@@ -36,7 +36,7 @@ export function loadStorage<T>(
 
 	const defaultConfig = { filters: defaultFilters, sorter: undefined, pagination: { size: 25 } }
 
-	storage.set({ key: tableStorageKey, data: defaultConfig })
+	storage.set(tableStorageKey, defaultConfig)
 
 	return defaultConfig
 }

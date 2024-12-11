@@ -110,7 +110,7 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 
 	useEffect(
 		function syncTableConfig() {
-			storage.set({ key: `${tableId}.table`, data: tableConfig })
+			storage.set(`${tableId}.table`, tableConfig)
 		},
 		[storage, tableConfig, tableId],
 	)
