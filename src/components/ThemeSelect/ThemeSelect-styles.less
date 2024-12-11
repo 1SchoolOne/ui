@@ -1,0 +1,41 @@
+.schoolone-theme-select__trigger {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: var(--ant-padding-xs);
+	background-color: var(--ant-color-border-secondary);
+	border-radius: var(--ant-border-radius);
+	transition: var(--ant-motion-duration-mid);
+	width: fit-content;
+
+	&__icon {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition: color var(--ant-motion-duration-mid);
+		color: var(--ant-color-text);
+	}
+
+	&--is-open {
+		background-color: var(--ant-color-bg-text-hover);
+
+		.schoolone-theme-select__trigger__icon {
+			color: var(--ant-color-text-heading);
+		}
+
+		&:hover {
+			.schoolone-theme-select__trigger__icon {
+				color: var(--ant-color-text-heading);
+			}
+		}
+	}
+
+	&:not(.schoolone-theme-select__trigger--is-open):hover {
+		background-color: var(--ant-color-bg-text-hover);
+		cursor: pointer;
+
+		.schoolone-theme-select__trigger__icon {
+			color: var(--ant-color-text-label);
+		}
+	}
+}

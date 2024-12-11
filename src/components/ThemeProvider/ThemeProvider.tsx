@@ -1,26 +1,59 @@
 import { ConfigProvider, theme as themeAlg } from 'antd'
 import frenchLocale from 'antd/locale/fr_FR'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 
 import { PropsWithChildren } from '@types'
 
+import { useLocalStorage } from '@utils/localStorage'
+
+type ThemeMode = 'light' | 'dark'
+type ThemePreference = ThemeMode | 'system'
+
 interface ThemeContextState {
-	theme: 'light' | 'dark'
-	toggleTheme: () => void
+	themePreference: ThemePreference
+	activeTheme: ThemeMode
+	setThemePreference: (theme: ThemePreference) => void
 }
 
-const ThemeContext = createContext<ThemeContextState>(null!)
+export const ThemeContext = createContext<ThemeContextState>(null!)
 
 export function ThemeProvider({ children }: PropsWithChildren) {
-	const [theme, setTheme] = useState<'light' | 'dark'>('light')
+	const storage = useLocalStorage<{ theme: ThemePreference }>()
 
-	const toggleTheme = () => {
-		setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+	const getInitialThemePreference = (): ThemePreference => {
+		return storage.get('theme') ?? 'system'
 	}
 
+	const [themePreference, setThemePreference] = useState<ThemePreference>(getInitialThemePreference)
+	const [systemTheme, setSystemTheme] = useState<ThemeMode>(() => {
+		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			return 'dark'
+		}
+		return 'light'
+	})
+
+	const activeTheme: ThemeMode = themePreference === 'system' ? systemTheme : themePreference
+
+	useEffect(function listenForSystemChange() {
+		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+		const handleChange = (e: MediaQueryListEvent) => {
+			setSystemTheme(e.matches ? 'dark' : 'light')
+		}
+
+		mediaQuery.addEventListener('change', handleChange)
+
+		return () => mediaQuery.removeEventListener('change', handleChange)
+	}, [])
+
+	useEffect(() => {
+		storage.set('theme', themePreference)
+	}, [themePreference, storage])
+
 	const value: ThemeContextState = {
-		theme,
-		toggleTheme,
+		themePreference,
+		activeTheme,
+		setThemePreference,
 	}
 
 	return (
@@ -29,7 +62,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 				theme={{
 					cssVar: true,
 					token: { colorPrimary: '#FE8E06' },
-					algorithm: theme === 'dark' ? themeAlg.darkAlgorithm : themeAlg.defaultAlgorithm,
+					algorithm: activeTheme === 'dark' ? themeAlg.darkAlgorithm : themeAlg.defaultAlgorithm,
 				}}
 				locale={frenchLocale}
 			>
@@ -37,8 +70,4 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 			</ConfigProvider>
 		</ThemeContext.Provider>
 	)
-}
-
-export function useTheme() {
-	return useContext(ThemeContext)
 }

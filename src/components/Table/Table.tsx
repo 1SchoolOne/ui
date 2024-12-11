@@ -3,9 +3,9 @@ import { Table as AntdTable, Grid } from 'antd'
 import { AnyObject } from 'antd/es/_util/type'
 import { TableRef } from 'antd/es/table'
 import classNames from 'classnames'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
-import { useTheme } from '@components'
+import { ThemeContext } from '@components'
 
 import { useLocalStorage } from '@utils/localStorage'
 
@@ -46,7 +46,7 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 	} = props
 
 	const storage = useLocalStorage()
-	const { theme } = useTheme()
+	const { activeTheme } = useContext(ThemeContext)
 	const screens = useBreakpoint()
 	const tableRef = useRef<TableRef>(null)
 	const { globalSearchInput, globalSearchValue } = useGlobalSearch<T, C>({
@@ -122,7 +122,7 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 				{...restProps}
 				ref={tableRef}
 				className={classNames('schoolone-table', className)}
-				rowClassName={(_record, index) => getRowClassname(index, theme)}
+				rowClassName={(_record, index) => getRowClassname(index, activeTheme)}
 				rowKey={(record) => {
 					const rowKey = generateRowKey(JSON.stringify(record))
 
