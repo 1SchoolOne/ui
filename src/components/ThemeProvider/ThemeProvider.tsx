@@ -1,21 +1,11 @@
 import { ConfigProvider, theme as themeAlg } from 'antd'
 import frenchLocale from 'antd/locale/fr_FR'
-import { createContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { PropsWithChildren } from '@types'
 
 import { useLocalStorage } from '@utils/localStorage'
-
-type ThemeMode = 'light' | 'dark'
-type ThemePreference = ThemeMode | 'system'
-
-interface ThemeContextState {
-	themePreference: ThemePreference
-	activeTheme: ThemeMode
-	setThemePreference: (theme: ThemePreference) => void
-}
-
-export const ThemeContext = createContext<ThemeContextState>(null!)
+import { ThemeContext, ThemeContextState, ThemeMode, ThemePreference } from './ThemeContext'
 
 export function ThemeProvider({ children }: PropsWithChildren) {
 	const storage = useLocalStorage<{ theme: ThemePreference }>()
