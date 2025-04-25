@@ -1,16 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
 import { Table as AntdTable, Grid } from 'antd'
-import { AnyObject } from 'antd/es/_util/type'
 import { TableRef } from 'antd/es/table'
 import classNames from 'classnames'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
-import { ThemeContext } from '@components'
-
 import { useLocalStorage } from '@utils/localStorage'
 
+import { ThemeContext } from '../ThemeProvider/ThemeContext'
 import { DEFAULT_PAGE_SIZE_OPTIONS } from './Table-constants'
-import { ColumnType, ColumnsType, Filters, TableConfigState, TableProps } from './Table-types'
+import {
+	AnyObject,
+	ColumnType,
+	ColumnsType,
+	Filters,
+	TableConfigState,
+	TableProps,
+} from './Table-types'
 import {
 	defaultRenderHeaderCallback,
 	generateRowKey,

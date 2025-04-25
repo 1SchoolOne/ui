@@ -1,9 +1,16 @@
 import { QueryKey } from '@tanstack/react-query'
-import { TableProps as AntdTableProps } from 'antd'
-import { TableColumnType } from 'antd'
-import { AnyObject } from 'antd/es/_util/type'
-import { FilterValue as AntdFilterValue, SortOrder } from 'antd/es/table/interface'
+import { TableProps as AntdTableProps, TableColumnType } from 'antd'
 import { ReactNode } from 'react'
+
+import { NonUndefined } from '@types'
+
+export type FilterValue = TableColumnType['filteredValue']
+
+export type SortOrder = NonUndefined<TableColumnType['sortOrder']>
+
+export type AnyObject = {
+	[x: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
+}
 
 export interface TableProps<T extends AnyObject, C extends readonly ColumnType<T>[]>
 	extends Omit<AntdTableProps, 'dataSource' | 'columns' | 'onChange'> {
@@ -82,8 +89,6 @@ export interface TableConfigState<T> {
 }
 
 export type Filters<K extends string | number | symbol, V = FilterValue> = Partial<Record<K, V>>
-
-export type FilterValue = AntdFilterValue | null | undefined
 
 export interface Sorter<T> {
 	field: keyof T

@@ -1,5 +1,4 @@
 import { InputRef } from 'antd'
-import { AnyObject } from 'antd/es/_util/type'
 import { TableRef } from 'antd/es/table'
 import { Search } from 'lucide-react'
 import { ReactNode, RefObject, useMemo, useState } from 'react'
@@ -8,6 +7,7 @@ import { getLocalStorage } from '@utils/localStorage'
 import { useDebounce } from '@utils/useDebounce'
 
 import {
+	AnyObject,
 	ColumnFilterType,
 	ColumnStaticFilterType,
 	ColumnType,
