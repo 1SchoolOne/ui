@@ -19,10 +19,7 @@
 		"noFallthroughCasesInSwitch": true,
 
 		"paths": {
-			"@components": ["./src/components/index.ts"],
-			"@utils/*": ["./src/utils/*"],
-			"@types": ["./src/types/index.ts"],
-			"@public/*": ["./public/*"]
+			"~/*": ["./lib/*"]
 		}
 	},
 	"include": ["vite.config.ts"],

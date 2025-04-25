@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { Button, Form, Input, Space, Typography } from 'antd'
 
-import { AuthLayout } from '@components'
+import { AuthLayout } from '~/components/AuthLayout/AuthLayout'
 
 import './AuthLayout.stories-styles.less'
 

@@ -29,6 +29,22 @@ jobs:
     - name: Audit packages
       run: yarn npm audit
 
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install Dependencies
+      run: yarn install --immutable
+
+    - name: Check Code Formatting
+      run: yarn run format
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -42,7 +58,7 @@ jobs:
     - name: Install Dependencies
       run: yarn install --immutable
 
-    - name: Code Linting
+    - name: Check Code Linting
       run: yarn run lint
 
   test:

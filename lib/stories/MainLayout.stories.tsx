@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { Space, Typography } from 'antd'
 import { EllipsisVertical, Grip, GripVertical, IceCreamCone, Menu } from 'lucide-react'
 
-import { MainLayout } from '@components'
+import { MainLayout } from '~/components/MainLayout/MainLayout'
 
 import { version as packageVersion } from '../../package.json'
 

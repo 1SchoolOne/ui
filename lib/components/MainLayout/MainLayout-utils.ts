@@ -1,4 +1,4 @@
-import { getLocalStorage } from '@utils/localStorage'
+import { getLocalStorage } from '~/utils/localStorage'
 
 export const SIDEBAR_STORAGE_KEY = 'sidebar.isCollapsed'
 

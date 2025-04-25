@@ -14,7 +14,7 @@ export default tseslint.config({
 		jsdoc.configs['flat/stylistic-typescript'],
 		prettier,
 	],
-	files: ['src/**/*.{ts,tsx}'],
+	files: ['lib/**/*.{ts,tsx}'],
 	languageOptions: {
 		ecmaVersion: 2020,
 		globals: globals.browser,
