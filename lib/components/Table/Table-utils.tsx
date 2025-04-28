@@ -23,6 +23,7 @@ import {
 } from './_components/RadioOrCheckboxDropdown/RadioOrCheckboxDropdown'
 import { SearchDropdown } from './_components/SearchDropdown/SearchDropdown'
 
+/** @internal */
 export function loadStorage<T>(
 	tableId: string,
 	defaultFilters: Filters<keyof T>,
@@ -45,6 +46,7 @@ export function loadStorage<T>(
  * Generates a unique hash based on the input string. Useful to generate React keys.
  *
  * Source: https://stackoverflow.com/a/7616484
+ * @internal
  */
 export function generateRowKey(str: string) {
 	let hash = 0,
@@ -62,6 +64,7 @@ export function generateRowKey(str: string) {
 	return hash
 }
 
+/** @internal */
 export function getRowClassname(index: number, theme: 'light' | 'dark'): string {
 	if (index % 2 === 0) {
 		return `even-row even-row__${theme}`
@@ -72,6 +75,7 @@ export function getRowClassname(index: number, theme: 'light' | 'dark'): string 
 
 /**
  * Calculate the table height based on its parent's height and the table header height, if displayed.
+ * @internal
  */
 export function useTableHeight(tableRef: RefObject<TableRef>, tableHeader: boolean) {
 	const tableHeight = useMemo(() => {
@@ -89,6 +93,7 @@ export function useTableHeight(tableRef: RefObject<TableRef>, tableHeader: boole
 }
 
 // TODO: need a fix. `computedStyleMap` is not supported in Firefox as of now
+/** @internal */
 export function getScrollX(tableRef: RefObject<TableRef>) {
 	if (tableRef.current !== null) {
 		const tableContainer = tableRef.current.nativeElement.parentElement as HTMLElement
@@ -100,6 +105,7 @@ export function getScrollX(tableRef: RefObject<TableRef>) {
 	}
 }
 
+/** @internal */
 export function useTableHeader(params: RenderHeaderParams) {
 	const { resetFiltersButton, globalSearchInput, showHeader, renderCallback } = params
 
@@ -114,6 +120,7 @@ export function useTableHeader(params: RenderHeaderParams) {
 	)
 }
 
+/** @internal */
 export function useGlobalSearch<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 	params: UseGlobalSearchParams<T, C> | undefined,
 ): {
@@ -138,6 +145,7 @@ export function useGlobalSearch<T extends AnyObject, C extends readonly ColumnTy
 	}
 }
 
+/** @internal */
 export function defaultRenderHeaderCallback(
 	resetFiltersButton?: ReactNode,
 	globalSearchInput?: ReactNode,
