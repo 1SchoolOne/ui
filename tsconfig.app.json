@@ -21,12 +21,12 @@
 		"noFallthroughCasesInSwitch": true,
 
 		"paths": {
-			"@components": ["./src/components/index.ts"],
-			"@utils/*": ["./src/utils/*"],
-			"@types": ["./src/types/index.ts"],
+			"@components": ["./lib/components/index.ts"],
+			"@utils/*": ["./lib/utils/*"],
+			"@types": ["./lib/types/index.ts"],
 			"@public/*": ["./public/*"]
 		}
 	},
-	"include": ["src"],
+	"include": ["lib"],
 	"exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/__tests/**"]
 }

@@ -18,9 +18,9 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'@components': resolve(__dirname, './src/components'),
-			'@utils': resolve(__dirname, './src/utils'),
-			'@types': resolve(__dirname, './src/types'),
+			'@components': resolve(__dirname, './lib/components'),
+			'@utils': resolve(__dirname, './lib/utils'),
+			'@types': resolve(__dirname, './lib/types'),
 			'@public': resolve(__dirname, './public'),
 		},
 	},
@@ -30,7 +30,7 @@ export default defineConfig({
 		cssMinify: false,
 		cssCodeSplit: false,
 		lib: {
-			entry: resolve(__dirname, 'src/index.ts'),
+			entry: resolve(__dirname, 'lib/index.ts'),
 			name: 'index',
 			formats: ['es'],
 		},
