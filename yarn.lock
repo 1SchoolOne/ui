@@ -50,7 +50,7 @@ __metadata:
     typescript-eslint: "npm:8.31.0"
     vite: "npm:6.3.2"
     vite-plugin-dts: "npm:4.5.3"
-    vite-plugin-lib-inject-css: "npm:^2.2.2"
+    vite-plugin-lib-inject-css: "npm:2.2.2"
     vitest: "npm:3.1.2"
   peerDependencies:
     "@tanstack/react-query": ">=5.59.0"
@@ -11188,7 +11188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-lib-inject-css@npm:^2.2.2":
+"vite-plugin-lib-inject-css@npm:2.2.2":
   version: 2.2.2
   resolution: "vite-plugin-lib-inject-css@npm:2.2.2"
   dependencies:
