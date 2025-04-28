@@ -6,9 +6,10 @@ import {
 } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 
-import { useLocalStorage } from '@utils/localStorage'
+import { useLocalStorage } from '@lib/utils/localStorage'
 
-import schoolOneLogoUrl from '../../assets/schoolone-logo-white.svg'
+import schoolOneLogoUrl from '@lib/assets/schoolone-logo-white.svg'
+
 import { SIDEBAR_STORAGE_KEY, loadStorage } from './MainLayout-utils'
 
 import './MainLayout-styles.less'

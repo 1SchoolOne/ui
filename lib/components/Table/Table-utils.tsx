@@ -4,8 +4,8 @@ import { TableRef } from 'antd/es/table'
 import { Search } from 'lucide-react'
 import { ReactNode, RefObject, useMemo, useState } from 'react'
 
-import { getLocalStorage } from '@utils/localStorage'
-import { useDebounce } from '@utils/useDebounce'
+import { getLocalStorage } from '@lib/utils/localStorage'
+import { useDebounce } from '@lib/utils/useDebounce'
 
 import {
 	ColumnFilterType,

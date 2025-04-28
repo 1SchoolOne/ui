@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import { Info } from '@components'
+import { Info } from '@lib/components/Info/Info'
 
 import './Info.stories-styles.less'
 

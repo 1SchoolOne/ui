@@ -5,9 +5,9 @@ import { TableRef } from 'antd/es/table'
 import classNames from 'classnames'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
-import { ThemeContext } from '@components'
+import { ThemeContext } from '@lib/components/ThemeProvider/ThemeContext'
 
-import { useLocalStorage } from '@utils/localStorage'
+import { useLocalStorage } from '@lib/utils/localStorage'
 
 import { DEFAULT_PAGE_SIZE_OPTIONS } from './Table-constants'
 import { ColumnType, ColumnsType, Filters, TableConfigState, TableProps } from './Table-types'

@@ -20,10 +20,7 @@
 		"noFallthroughCasesInSwitch": true,
 
 		"paths": {
-			"@components": ["./lib/components/index.ts"],
-			"@utils/*": ["./lib/utils/*"],
-			"@types": ["./lib/types/index.ts"],
-			"@public/*": ["./public/*"]
+			"@lib/*": ["./lib/*"]
 		}
 	},
 	"include": ["vite.config.ts"],

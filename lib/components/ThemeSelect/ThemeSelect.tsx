@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import { MonitorIcon, MoonIcon, SunIcon } from 'lucide-react'
 import { useContext, useState } from 'react'
 
-import { ThemeContext } from '@components'
+import { ThemeContext } from '@lib/components/ThemeProvider/ThemeContext'
 
 import './ThemeSelect-styles.less'
 

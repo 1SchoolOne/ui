@@ -2,7 +2,10 @@ import { Meta, StoryObj } from '@storybook/react'
 import { Flex, Typography } from 'antd'
 import { useContext } from 'react'
 
-import { MainLayout, ThemeContext, ThemeProvider, ThemeSelect } from '@components'
+import { MainLayout } from '@lib/components/MainLayout/MainLayout'
+import { ThemeContext } from '@lib/components/ThemeProvider/ThemeContext'
+import { ThemeProvider } from '@lib/components/ThemeProvider/ThemeProvider'
+import { ThemeSelect } from '@lib/components/ThemeSelect/ThemeSelect'
 
 const meta: Meta<typeof ThemeProvider> = {
 	title: 'Contexts/Theme',

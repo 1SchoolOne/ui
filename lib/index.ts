@@ -1,13 +1,13 @@
 // Components
-export * from '@components'
+export * from '@lib/components'
 
 // Types
-export * from '@types'
+export * from '@lib/types'
 
 // Utils
-export { isNonEmptyObject } from '@utils/isNonEmptyObject'
-export { useDebounce } from '@utils/useDebounce'
-export { getLocalStorage, useLocalStorage } from '@utils/localStorage'
+export { isNonEmptyObject } from '@lib/utils/isNonEmptyObject'
+export { useDebounce } from '@lib/utils/useDebounce'
+export { getLocalStorage, useLocalStorage } from '@lib/utils/localStorage'
 export {
 	getCheckboxFilterConfig,
 	getRadioFilterConfig,
@@ -15,4 +15,4 @@ export {
 	getStaticCheckboxFilterConfig,
 	getStaticRadioFilterConfig,
 	getStaticSearchFilterConfig,
-} from './components/Table/Table-utils'
+} from '@lib/components/Table/Table-utils'

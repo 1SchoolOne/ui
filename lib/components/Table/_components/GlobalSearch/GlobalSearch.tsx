@@ -1,6 +1,6 @@
 import { Input, Space } from 'antd'
 
-import { Info } from '@components'
+import { Info } from '@lib/components/Info/Info'
 
 import './GlobalSearch-styles.less'
 

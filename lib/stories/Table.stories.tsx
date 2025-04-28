@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Table } from '@components'
-
-import { getSearchFilterConfig } from '../components/Table/Table-utils'
+import { Table } from '@lib/components/Table/Table'
+import { getSearchFilterConfig } from '@lib/components/Table/Table-utils'
 
 const meta: Meta<typeof Table> = {
 	title: 'Components/Table',

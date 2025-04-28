@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import { InfoIcon } from 'lucide-react'
 import { ReactNode } from 'react'
 
-import { isNonEmptyObject } from '@utils/isNonEmptyObject'
+import { isNonEmptyObject } from '@lib/utils/isNonEmptyObject'
 
 import './Info-styles.less'
 

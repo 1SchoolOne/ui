@@ -20,10 +20,7 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'@components': resolve(__dirname, './lib/components'),
-			'@utils': resolve(__dirname, './lib/utils'),
-			'@types': resolve(__dirname, './lib/types'),
-			'@public': resolve(__dirname, './public'),
+			'@lib': resolve(__dirname, './lib'),
 		},
 	},
 	build: {
