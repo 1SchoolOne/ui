@@ -17,8 +17,8 @@ const leftPanelSpan: PanelSpan = {
 	sm: 0,
 	md: 12,
 	lg: 12,
-	xl: 14,
-	xxl: 14,
+	xl: 10,
+	xxl: 10,
 }
 
 const rightPanelSpan: PanelSpan = {
@@ -26,8 +26,8 @@ const rightPanelSpan: PanelSpan = {
 	sm: 24,
 	md: 12,
 	lg: 12,
-	xl: 10,
-	xxl: 10,
+	xl: 14,
+	xxl: 14,
 }
 
 interface AuthLayoutProps {
