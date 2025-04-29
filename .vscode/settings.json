@@ -1,6 +1,26 @@
 {
 	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
 	"editor.formatOnSave": true,
+	"[javascript]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": "always"
+		}
+	},
+	"[javascriptreact]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": "always"
+		}
+	},
+	"[typescript]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": "always"
+		}
+	},
+	"[typescriptreact]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": "always"
+		}
+	},
 	"[json]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
