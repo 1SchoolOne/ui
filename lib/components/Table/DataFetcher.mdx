@@ -1,0 +1,226 @@
+import {Meta} from '@storybook/blocks'
+
+<Meta title='Components/Table/Data Fetcher' />
+
+# Data Fetcher
+
+## Overview
+
+The `dataFetcher` prop allows you to customize how your table component fetches and manages data, enabling integration with any data fetching library or approach. This documentation explains how to use and implement custom data fetchers.
+
+## Interface Definition
+
+```typescript
+export interface FetchResult<T> {
+	data: Array<T> | null | undefined
+	totalCount: number
+	isLoading: boolean
+	error: Error | null
+	refetch: () => void
+}
+
+export interface DataFetcherParams<T> {
+	filters: Filters<keyof T> | undefined
+	sorter: Sorter<T> | undefined
+	pagination: Pagination | undefined
+	currentPage: number
+	globalSearch?: string
+	refetchTriggers?: unknown[]
+}
+
+export type DataFetcher<T> = (params: DataFetcherParams<T>) => FetchResult<T>
+```
+
+## Parameters
+
+The `dataFetcher` function receives a single object containing:
+
+<table>
+    <tr>
+        <td>Parameter</td>
+        <td>Type</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>`filters`</td>
+        <td>`Filters<keyof T> | undefined`</td>
+        <td>The current filter settings for each column</td>
+    </tr>
+    <tr>
+        <td>`sorter`</td>
+        <td>`Sorter<T> | undefined`</td>
+        <td>The current sort field and order</td>
+    </tr>
+    <tr>
+        <td>`pagination`</td>
+        <td>`Pagination | undefined`</td>
+        <td>Pagination configuration (size)</td>
+    </tr>
+    <tr>
+        <td>`currentPage`</td>
+        <td>`number`</td>
+        <td>The current page number</td>
+    </tr>
+    <tr>
+        <td>`globalSearch`</td>
+        <td>`string | undefined`</td>
+        <td>Global search string if enabled</td>
+    </tr>
+    <tr>
+        <td>`refetchTriggers`</td>
+        <td>`unknown[] | undefined`</td>
+        <td>Additional dependencies to trigger refetches</td>
+    </tr>
+</table>
+
+## Return Value
+
+The `dataFetcher` function must return an object with:
+
+<table>
+    <tr>
+        <td>Property</td>
+        <td>Type</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>`data`</td>
+        <td>`Array<T> | null | undefined`</td>
+        <td>The fetched data or null/undefined while loading</td>
+    </tr>
+    <tr>
+        <td>`isLoading`</td>
+        <td>`boolean`</td>
+        <td>Whether data is currently being fetched</td>
+    </tr>
+    <tr>
+        <td>`error`</td>
+        <td>`Error | null`</td>
+        <td>Any error that occurred during fetching</td>
+    </tr>
+    <tr>
+        <td>`refetch`</td>
+        <td>`() => void`</td>
+        <td>Function to manually trigger a refetch</td>
+    </tr>
+</table>
+
+## Example: TanStack Query Implementation
+
+Here's how to implement a data fetcher using TanStack Query:
+
+```typescript
+import { useQuery } from '@tanstack/react-query';
+
+export function useTanStackQueryDataFetcher<T extends AnyObject>(
+  tableId: string,
+  dataSource: DataSource<T>,
+  fetchParams: {
+    filters: Filters<keyof T> | undefined;
+    sorter: Sorter<T> | undefined;
+    pagination: Pagination | undefined;
+    currentPage: number;
+    globalSearch?: string;
+    refetchTriggers?: unknown[];
+  }
+): FetchResult<DataSourceObject<Array<T>>> {
+  const queryKey = [
+    `${tableId}.table`,
+    {
+      filters: fetchParams.filters,
+      sorter: fetchParams.sorter,
+      pagination: fetchParams.pagination,
+      currentPage: fetchParams.currentPage,
+      globalSearch: fetchParams.globalSearch,
+    },
+    ...(fetchParams.refetchTriggers || []),
+  ];
+  
+  const queryFn = async () => {
+    // Handle both static data and function data sources
+    if (typeof dataSource !== 'function') {
+      return dataSource;
+    }
+
+    return await dataSource(
+      fetchParams.filters,
+      fetchParams.sorter,
+      fetchParams.pagination,
+      fetchParams.currentPage
+    );
+  };
+
+  const { data, isPending, error, refetch } = useQuery({
+    queryKey,
+    queryFn
+  });
+
+  return {
+    data: data.result,
+    totalCount: data.totalCount,
+    isLoading: isPending,
+    error: error ? new Error(String(error)) : null,
+    refetch
+  };
+}
+```
+
+## Usage Example
+
+```tsx
+import { Table } from './Table';
+import { useTanStackQueryDataFetcher } from './data-fetchers';
+
+function UserTable() {
+  return (
+    <Table
+      tableId="users"
+      columns={userColumns}
+      defaultFilters={{}}
+      dataSource={fetchUserData}
+      dataFetcher={(params) => useTanStackQueryDataFetcher("users", fetchUserData, params)}
+    />
+  );
+}
+
+// The data source function that will be used by the TanStack Query fetcher
+async function fetchUserData(
+  filters,
+  sorter,
+  pagination,
+  currentPage
+) {
+  const response = await fetch(`/api/users?page=${currentPage}&size=${pagination.size}`);
+  const data = await response.json();
+  
+  return {
+    data: data.items,
+    totalCount: data.total
+  };
+}
+```
+
+## Default Behavior
+
+If no `dataFetcher` is provided, the table component will use its built-in implementation, which:
+
+1. Uses React's built-in state hooks (`useState`, `useEffect`)
+2. Handles loading and error states
+3. Provides a basic refetch mechanism
+4. Does not include any caching or advanced optimizations
+
+## Best Practices
+
+1. **Match your project's data fetching strategy** - Use the same library that's used elsewhere in your project for consistency.
+
+2. **Handle loading states properly** - Always set `isLoading` correctly to ensure loading indicators work.
+
+3. **Normalize error handling** - Convert library-specific errors to standard Error objects.
+
+4. **Implement proper refetch functionality** - The `refetch` function should trigger a fresh data fetch regardless of caching.
+
+5. **Respect all fetch parameters** - Make sure to use all the parameters provided to the fetch function for consistency.
+
+6. **Consider debouncing** - For inputs like global search, consider implementing debouncing to reduce unnecessary API calls.
+
+7. **Memoize dependencies** - Use React's dependency arrays effectively to prevent unnecessary re-fetches.

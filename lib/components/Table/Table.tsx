@@ -1,47 +1,51 @@
-import { useQuery } from '@tanstack/react-query'
 import { Table as AntdTable, Grid } from 'antd'
-import { AnyObject } from 'antd/es/_util/type'
 import { TableRef } from 'antd/es/table'
 import classNames from 'classnames'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ThemeContext } from '@lib/components/ThemeProvider/ThemeContext'
 
+import { AnyObject } from '@lib/types'
+
 import { useLocalStorage } from '@lib/utils/localStorage'
 
 import { DEFAULT_PAGE_SIZE_OPTIONS } from './Table-constants'
-import { ColumnType, ColumnsType, Filters, TableConfigState, TableProps } from './Table-types'
+import { ColumnType, DataFetcherParams, Filters, TableConfigState, TableProps } from './Table-types'
 import {
 	defaultRenderHeaderCallback,
 	generateRowKey,
 	getRowClassname,
+	getScrollX,
 	loadStorage,
+	useConditionalDataFetcher,
 	useGlobalSearch,
 	useTableHeader,
 	useTableHeight,
 } from './Table-utils'
 import { ResetFiltersButton } from './_components/ResetFiltersButton/ResetFiltersButton'
+import { TableError } from './_components/TableError/TableError'
 
 import './Table-styles.less'
 
 const { useBreakpoint } = Grid
 
-export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
+export function Table<T extends AnyObject, C extends readonly ColumnType<T>[] = ColumnType<T>[]>(
 	props: TableProps<T, C>,
 ) {
 	const {
-		tableId,
+		className,
 		columns,
+		dataFetcher,
 		dataSource,
 		defaultFilters,
-		className,
-		refetchTriggers = [],
-		pagination,
-		locale,
 		displayResetFilters,
-		showHeader,
-		renderHeader = defaultRenderHeaderCallback,
 		globalSearchConfig,
+		locale,
+		pagination,
+		refetchTriggers,
+		renderHeader = defaultRenderHeaderCallback,
+		showHeader,
+		tableId,
 		...restProps
 	} = props
 
@@ -71,32 +75,25 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 		renderCallback: renderHeader,
 	})
 
-	const { data: tableData, isPending } = useQuery({
-		queryKey: [
-			`${tableId}.table`,
-			{
-				filters: tableConfig.filters,
-				sorter: tableConfig.sorter,
-				pagination: { ...tableConfig.pagination, currentPage },
-				globalSearch: globalSearchValue,
-			},
-			...refetchTriggers,
-		],
-		queryFn: async () => {
-			if (typeof dataSource !== 'function') {
-				return dataSource
-			}
+	const fetchParams: DataFetcherParams<T> = {
+		filters: tableConfig.filters,
+		sorter: tableConfig.sorter,
+		pagination: tableConfig.pagination,
+		currentPage,
+		globalSearch: globalSearchValue,
+		refetchTriggers,
+	}
 
-			return await dataSource(
-				tableConfig.filters,
-				tableConfig.sorter,
-				tableConfig.pagination,
-				currentPage,
-			)
-		},
+	const fetchResult = useConditionalDataFetcher({
+		tableId,
+		dataSource,
+		fetchParams,
+		customDataFetcher: dataFetcher,
 	})
 
-	const cols: ColumnsType<T> = useMemo(
+	const { data, error, isLoading, refetch, totalCount } = fetchResult
+
+	const cols: ColumnType<T>[] = useMemo(
 		() =>
 			columns.map((col) => ({
 				...col,
@@ -118,7 +115,7 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 	return (
 		<>
 			{tableHeader}
-			<AntdTable
+			<AntdTable<T>
 				{...restProps}
 				ref={tableRef}
 				className={classNames('schoolone-table', className)}
@@ -131,8 +128,9 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 				size={screens.xxl ? 'large' : 'small'}
 				scroll={{
 					y: tableHeight,
+					x: getScrollX(tableRef),
 				}}
-				dataSource={tableData?.data ?? []}
+				dataSource={error ? [] : (data ?? [])}
 				columns={cols}
 				onChange={(pagination, filters, sorter) => {
 					if (!Array.isArray(sorter)) {
@@ -152,35 +150,23 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[]>(
 						}))
 					}
 				}}
-				loading={isPending}
+				loading={isLoading}
 				pagination={
-					pagination === false
-						? false
-						: {
+					pagination !== false
+						? {
 								pageSize: tableConfig.pagination?.size,
 								pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
-								total: tableData?.totalCount,
-								showTotal: pagination?.showTotal
-									? pagination.showTotal
-									: (total, range) => `${range[0]}-${range[1]} sur ${total}`,
-								locale: {
-									next_page: 'Page suivante',
-									prev_page: 'Page précédente',
-								},
+								total: totalCount,
+								showTotal: (total, [startRange, endRange]) =>
+									`${startRange}-${endRange} sur ${total}`,
 								...pagination,
 							}
+						: false
 				}
 				locale={{
-					emptyText: 'Aucune donnée',
-					filterConfirm: 'OK',
-					filterReset: 'Réinitialiser',
-					filterTitle: 'Filtres',
-					selectAll: 'Tout sélectionner',
-					selectInvert: 'Inverser la sélection',
-					sortTitle: 'Trier',
-					triggerAsc: 'Ordre croissant',
-					triggerDesc: 'Ordre décroissant',
-					cancelSort: 'Réinitialiser le tri',
+					emptyText: error ? (
+						<TableError errorMessage={error.message} refetch={refetch} />
+					) : undefined,
 					...locale,
 				}}
 			/>

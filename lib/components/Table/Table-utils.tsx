@@ -1,8 +1,9 @@
 import { InputRef } from 'antd'
-import { AnyObject } from 'antd/es/_util/type'
 import { TableRef } from 'antd/es/table'
 import { Search } from 'lucide-react'
-import { ReactNode, RefObject, useMemo, useState } from 'react'
+import { ReactNode, RefObject, useCallback, useEffect, useMemo, useState } from 'react'
+
+import { AnyObject } from '@lib/types'
 
 import { getLocalStorage } from '@lib/utils/localStorage'
 import { useDebounce } from '@lib/utils/useDebounce'
@@ -11,8 +12,13 @@ import {
 	ColumnFilterType,
 	ColumnStaticFilterType,
 	ColumnType,
+	DataFetcher,
+	DataFetcherParams,
+	DataSource,
+	FetchResult,
 	Filters,
 	RenderHeaderParams,
+	StaticDataSource,
 	TableConfigState,
 	UseGlobalSearchParams,
 } from './Table-types'
@@ -22,6 +28,99 @@ import {
 	RadioOrCheckboxOption,
 } from './_components/RadioOrCheckboxDropdown/RadioOrCheckboxDropdown'
 import { SearchDropdown } from './_components/SearchDropdown/SearchDropdown'
+
+/** @internal */
+export function useConditionalDataFetcher<T extends AnyObject>(params: {
+	tableId: string
+	dataSource: DataSource<T>
+	fetchParams: DataFetcherParams<T>
+	customDataFetcher?: DataFetcher<T>
+}): FetchResult<T> {
+	const { dataSource, fetchParams, tableId, customDataFetcher } = params
+
+	const hasCustomFetcher = !!customDataFetcher
+
+	const defaultFetchResult = useDefaultDataFetcher({
+		tableId,
+		dataSource,
+		fetchParams,
+		skip: hasCustomFetcher,
+	})
+
+	return useMemo(() => {
+		if (hasCustomFetcher && customDataFetcher) {
+			return customDataFetcher(fetchParams)
+		}
+
+		return defaultFetchResult
+	}, [hasCustomFetcher, customDataFetcher, fetchParams, defaultFetchResult])
+}
+
+function useDefaultDataFetcher<T extends AnyObject>(params: {
+	tableId: string
+	dataSource: DataSource<T>
+	fetchParams: DataFetcherParams<T>
+	skip?: boolean
+}): FetchResult<T> {
+	const { dataSource, fetchParams, skip } = params
+
+	const [data, setData] = useState<StaticDataSource<T> | null>(null)
+	const [totalCount, setTotalCount] = useState(0)
+	const [isLoading, setIsLoading] = useState(false)
+	const [error, setError] = useState<Error | null>(null)
+
+	const fetchData = useCallback(async () => {
+		if (skip) return
+
+		setIsLoading(true)
+		setError(null)
+
+		try {
+			if (typeof dataSource !== 'function') {
+				setData(dataSource)
+				setTotalCount(dataSource.length)
+				setIsLoading(false)
+				return
+			}
+
+			const result = await dataSource({
+				filters: fetchParams.filters,
+				sorter: fetchParams.sorter,
+				pagination: fetchParams.pagination,
+				currentPage: fetchParams.currentPage,
+				globalSearch: fetchParams.globalSearch,
+			})
+
+			setData(result.data)
+			setTotalCount(result.totalCount)
+		} catch (err) {
+			setError(err instanceof Error ? err : new Error(String(err)))
+		} finally {
+			setIsLoading(false)
+		}
+	}, [
+		skip,
+		dataSource,
+		fetchParams.filters,
+		fetchParams.sorter,
+		fetchParams.pagination,
+		fetchParams.currentPage,
+		fetchParams.globalSearch,
+		...(fetchParams.refetchTriggers || []),
+	])
+
+	useEffect(() => {
+		fetchData()
+	}, [fetchData])
+
+	return {
+		data,
+		totalCount,
+		isLoading,
+		error,
+		refetch: fetchData,
+	}
+}
 
 /** @internal */
 export function loadStorage<T>(
@@ -95,13 +194,14 @@ export function useTableHeight(tableRef: RefObject<TableRef>, tableHeader: boole
 // TODO: need a fix. `computedStyleMap` is not supported in Firefox as of now
 /** @internal */
 export function getScrollX(tableRef: RefObject<TableRef>) {
-	if (tableRef.current !== null) {
+	if (tableRef?.current) {
 		const tableContainer = tableRef.current.nativeElement.parentElement as HTMLElement
 
 		const totalWidth = tableContainer.getBoundingClientRect().width
-		const { value: padding } = tableContainer.computedStyleMap().get('padding-left') as CSSUnitValue
+		const computedStyle = window.getComputedStyle(tableContainer)
+		const paddingLeft = parseFloat(computedStyle.getPropertyValue('padding-left'))
 
-		return totalWidth - padding
+		return totalWidth - paddingLeft
 	}
 }
 
