@@ -1,0 +1,9 @@
+{
+	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"entry": ["./lib/index.ts"],
+	"project": ["./.storybook/*.{ts,tsx}", "./lib/**/*.{js,ts,tsx}", "!./lib/**/*.d.ts"],
+	"paths": {
+		"@lib/*": ["./lib/*"]
+	},
+	"ignoreDependencies": ["@storybook/blocks", "commitizen"]
+}
