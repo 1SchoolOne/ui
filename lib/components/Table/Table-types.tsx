@@ -1,20 +1,40 @@
-import { QueryKey } from '@tanstack/react-query'
 import { TableProps as AntdTableProps } from 'antd'
 import { TableColumnType } from 'antd'
-import { AnyObject } from 'antd/es/_util/type'
 import { FilterValue as AntdFilterValue, SortOrder } from 'antd/es/table/interface'
 import { ReactNode } from 'react'
+
+import { AnyObject } from '@lib/types'
+
+export interface FetchResult<T> {
+	data: Array<T> | null | undefined
+	totalCount: number
+	isLoading: boolean
+	error: Error | null
+	refetch: () => void
+}
+
+export interface DataFetcherParams<T> {
+	filters: Filters<keyof T> | undefined
+	sorter: Sorter<T> | undefined
+	pagination: Pagination | undefined
+	currentPage: number
+	globalSearch?: string
+	refetchTriggers?: unknown[]
+}
+
+export type DataFetcher<T> = (params: DataFetcherParams<T>) => FetchResult<T>
 
 export interface TableProps<T extends AnyObject, C extends readonly ColumnType<T>[]>
 	extends Omit<AntdTableProps, 'dataSource' | 'columns' | 'onChange'> {
 	tableId: string
 	/** Either static data or a promise that returns the desired data */
 	dataSource: DataSource<T>
+	dataFetcher?: DataFetcher<T>
 	columns: C
 	/** Initial filters values. You should set only the values for the fields that are filterable. */
 	defaultFilters: Filters<keyof T, null>
 	/** Variables that should trigger a refetch */
-	refetchTriggers?: QueryKey
+	refetchTriggers?: unknown[]
 	/** Displays a reset filters button */
 	displayResetFilters?: true
 	/** Table header render callback */
@@ -30,19 +50,13 @@ export interface TableProps<T extends AnyObject, C extends readonly ColumnType<T
 	}
 }
 
-type DataSourceObject<T> = { totalCount: number; data: T }
+export type StaticDataSource<T> = Array<T>
 
-type DataSource<T> =
-	| DataSourceObject<Array<T>>
-	| ((
-			filters: Filters<keyof T> | undefined,
-			sorter: Sorter<T> | undefined,
-			pagination: Pagination | undefined,
-			currentPage: number,
-	  ) => Promise<DataSourceObject<Array<T>>>)
+export type DataSource<T> =
+	| StaticDataSource<T>
+	| ((params: DataFetcherParams<T>) => Promise<{ data: StaticDataSource<T>; totalCount: number }>)
 
-export type ColumnType<T extends AnyObject> = Omit<TableColumnType<T>, 'dataIndex' | 'title'> & {
-	dataIndex: Extract<keyof T, string>
+export type ColumnType<T extends AnyObject> = Omit<TableColumnType<T>, 'title'> & {
 	title: string
 }
 
@@ -55,8 +69,6 @@ export type ColumnStaticFilterType<T extends AnyObject> = Pick<
 	ColumnType<T>,
 	'filterDropdown' | 'filterIcon' | 'onFilterDropdownOpenChange' | 'onFilter'
 >
-
-export type ColumnsType<T extends AnyObject> = Array<ColumnType<T>>
 
 export interface RenderHeaderParams {
 	resetFiltersButton: ReactNode
@@ -83,14 +95,14 @@ export interface TableConfigState<T> {
 
 export type Filters<K extends string | number | symbol, V = FilterValue> = Partial<Record<K, V>>
 
-export type FilterValue = AntdFilterValue | null | undefined
+type FilterValue = AntdFilterValue | null | undefined
 
-export interface Sorter<T> {
+interface Sorter<T> {
 	field: keyof T
 	order: SortOrder
 }
 
-export interface Pagination {
+interface Pagination {
 	size: number
 }
 

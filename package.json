@@ -27,7 +27,6 @@
 		"dist"
 	],
 	"peerDependencies": {
-		"@tanstack/react-query": ">=5.59.0",
 		"antd": ">=5.21.1",
 		"classnames": ">=2.5.1",
 		"lucide-react": "0.447.0",
@@ -46,13 +45,10 @@
 		"@storybook/react": "8.6.12",
 		"@storybook/react-vite": "8.6.12",
 		"@storybook/test": "8.6.12",
-		"@tanstack/react-query": "5.59.0",
 		"@trivago/prettier-plugin-sort-imports": "5.2.2",
 		"@types/node": "22.14.1",
 		"@types/react": "18.3.1",
 		"@types/react-dom": "18.3.1",
-		"@typescript-eslint/eslint-plugin": "8.31.0",
-		"@typescript-eslint/parser": "8.31.0",
 		"@vitejs/plugin-react": "4.4.1",
 		"antd": "5.24.8",
 		"classnames": "2.5.1",
