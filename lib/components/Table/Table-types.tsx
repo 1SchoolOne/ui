@@ -29,6 +29,10 @@ export interface TableProps<T extends AnyObject, C extends readonly ColumnType<T
 	tableId: string
 	/** Either static data or a promise that returns the desired data */
 	dataSource: DataSource<T>
+	/**
+	 * Allows you to customize how your table component fetches and manages data,
+	 * enabling integration with any data fetching library or approach.
+	 */
 	dataFetcher?: DataFetcher<T>
 	columns: C
 	/** Initial filters values. You should set only the values for the fields that are filterable. */
@@ -43,7 +47,7 @@ export interface TableProps<T extends AnyObject, C extends readonly ColumnType<T
 	globalSearchConfig?: {
 		searchedFields: Array<ExtractTitles<C>>
 		/**
-		 * In milliseconds
+		 * In milliseconds. Set this to 0 to have no filter delay.
 		 * @default 750
 		 */
 		debounceDelay?: number
@@ -70,11 +74,21 @@ export type ColumnStaticFilterType<T extends AnyObject> = Pick<
 	'filterDropdown' | 'filterIcon' | 'onFilterDropdownOpenChange' | 'onFilter'
 >
 
-export interface RenderHeaderParams {
-	resetFiltersButton: ReactNode
-	globalSearchInput: ReactNode
-	showHeader: boolean
-	renderCallback: RenderHeaderCallback
+export interface RenderTableHeaderParams<T extends AnyObject, C extends readonly ColumnType<T>[]> {
+	resetFilters: {
+		enabled: boolean
+		onClick: () => void
+	}
+	globalSearch: {
+		enabled: boolean
+		searchedFields: Array<ExtractTitles<C>>
+		value: string
+		setValue: (value: string) => void
+	}
+	renderCallback: (
+		globalSearchNode: React.ReactNode,
+		resetFiltersNode: React.ReactNode,
+	) => React.ReactNode
 }
 
 type RenderHeaderCallback = (
@@ -87,6 +101,11 @@ type ExtractTitles<C extends readonly ColumnType<any>[]> = Extract<C[number]['ti
 
 /* - - - Table config - - - */
 
+/**
+ * WARNING: All properties in tableConfig are persisted to localStorage.
+ * Be mindful when adding new properties as they will increase storage usage
+ * and will persist after full page reload.
+ */
 export interface TableConfigState<T> {
 	filters: Filters<keyof T> | undefined
 	sorter: Sorter<T> | undefined
@@ -104,11 +123,4 @@ interface Sorter<T> {
 
 interface Pagination {
 	size: number
-}
-
-/* - - - Utils - - - */
-
-export interface UseGlobalSearchParams<T extends AnyObject, C extends readonly ColumnType<T>[]> {
-	searchedFields: Array<ExtractTitles<C>>
-	debounceDelay?: number
 }

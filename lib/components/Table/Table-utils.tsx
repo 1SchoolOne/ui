@@ -1,12 +1,11 @@
 import { InputRef } from 'antd'
 import { TableRef } from 'antd/es/table'
 import { Search } from 'lucide-react'
-import { ReactNode, RefObject, useCallback, useEffect, useMemo, useState } from 'react'
+import { RefObject, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { AnyObject } from '@lib/types'
 
 import { getLocalStorage } from '@lib/utils/localStorage'
-import { useDebounce } from '@lib/utils/useDebounce'
 
 import {
 	ColumnFilterType,
@@ -17,16 +16,16 @@ import {
 	DataSource,
 	FetchResult,
 	Filters,
-	RenderHeaderParams,
+	RenderTableHeaderParams,
 	StaticDataSource,
 	TableConfigState,
-	UseGlobalSearchParams,
 } from './Table-types'
 import { GlobalSearch } from './_components/GlobalSearch/GlobalSearch'
 import {
 	RadioOrCheckboxDropdown,
 	RadioOrCheckboxOption,
 } from './_components/RadioOrCheckboxDropdown/RadioOrCheckboxDropdown'
+import { ResetFiltersButton } from './_components/ResetFiltersButton/ResetFiltersButton'
 import { SearchDropdown } from './_components/SearchDropdown/SearchDropdown'
 
 /** @internal */
@@ -134,7 +133,11 @@ export function loadStorage<T>(
 		return storage.get(tableStorageKey)
 	}
 
-	const defaultConfig = { filters: defaultFilters, sorter: undefined, pagination: { size: 25 } }
+	const defaultConfig: TableConfigState<T> = {
+		filters: defaultFilters,
+		sorter: undefined,
+		pagination: { size: 25 },
+	}
 
 	storage.set(tableStorageKey, defaultConfig)
 
@@ -206,55 +209,32 @@ export function getScrollX(tableRef: RefObject<TableRef>) {
 }
 
 /** @internal */
-export function useTableHeader(params: RenderHeaderParams) {
-	const { resetFiltersButton, globalSearchInput, showHeader, renderCallback } = params
+export function renderTableHeader<
+	T extends AnyObject,
+	C extends readonly ColumnType<T>[] = ColumnType<T>[],
+>(params: RenderTableHeaderParams<T, C>) {
+	const { resetFilters, globalSearch, renderCallback } = params
 
-	if (!showHeader || (!resetFiltersButton && !globalSearchInput)) {
+	if (!resetFilters.enabled && !globalSearch.enabled) {
 		return null
 	}
 
+	const globalSearchNode = globalSearch.enabled ? (
+		<GlobalSearch
+			searchedFields={globalSearch.searchedFields}
+			onChange={globalSearch.setValue}
+			value={globalSearch.value}
+		/>
+	) : null
+
+	const resetFiltersNode = resetFilters.enabled ? (
+		<ResetFiltersButton onClick={resetFilters.onClick} />
+	) : null
+
 	return (
 		<div className="schoolone-table-header">
-			{renderCallback(resetFiltersButton, globalSearchInput)}
+			{renderCallback(globalSearchNode, resetFiltersNode)}
 		</div>
-	)
-}
-
-/** @internal */
-export function useGlobalSearch<T extends AnyObject, C extends readonly ColumnType<T>[]>(
-	params: UseGlobalSearchParams<T, C> | undefined,
-): {
-	globalSearchInput: ReactNode
-	globalSearchValue: string
-} {
-	const [value, setValue] = useState('')
-	const debouncedValue = useDebounce(value, params?.debounceDelay ?? 750)
-
-	if (!params) {
-		return {
-			globalSearchInput: null,
-			globalSearchValue: '',
-		}
-	}
-
-	return {
-		globalSearchInput: (
-			<GlobalSearch searchedFields={params.searchedFields} value={value} onChange={setValue} />
-		),
-		globalSearchValue: debouncedValue,
-	}
-}
-
-/** @internal */
-export function defaultRenderHeaderCallback(
-	resetFiltersButton?: ReactNode,
-	globalSearchInput?: ReactNode,
-) {
-	return (
-		<>
-			{globalSearchInput}
-			{resetFiltersButton}
-		</>
 	)
 }
 
