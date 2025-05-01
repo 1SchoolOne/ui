@@ -8,21 +8,19 @@ import { ThemeContext } from '@lib/components/ThemeProvider/ThemeContext'
 import { AnyObject } from '@lib/types'
 
 import { useLocalStorage } from '@lib/utils/localStorage'
+import { useDebounce } from '@lib/utils/useDebounce'
 
-import { DEFAULT_PAGE_SIZE_OPTIONS } from './Table-constants'
+import { DEFAULT_GLOBAL_SEARCH_DEBOUNCE, DEFAULT_PAGE_SIZE_OPTIONS } from './Table-constants'
 import { ColumnType, DataFetcherParams, Filters, TableConfigState, TableProps } from './Table-types'
 import {
-	defaultRenderHeaderCallback,
 	generateRowKey,
 	getRowClassname,
 	getScrollX,
 	loadStorage,
+	renderTableHeader,
 	useConditionalDataFetcher,
-	useGlobalSearch,
-	useTableHeader,
 	useTableHeight,
 } from './Table-utils'
-import { ResetFiltersButton } from './_components/ResetFiltersButton/ResetFiltersButton'
 import { TableError } from './_components/TableError/TableError'
 
 import './Table-styles.less'
@@ -43,7 +41,7 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[] = 
 		locale,
 		pagination,
 		refetchTriggers,
-		renderHeader = defaultRenderHeaderCallback,
+		renderHeader,
 		showHeader,
 		tableId,
 		...restProps
@@ -53,34 +51,28 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[] = 
 	const { activeTheme } = useContext(ThemeContext)
 	const screens = useBreakpoint()
 	const tableRef = useRef<TableRef>(null)
-	const { globalSearchInput, globalSearchValue } = useGlobalSearch<T, C>({
-		...globalSearchConfig,
-		searchedFields: globalSearchConfig?.searchedFields ?? [],
-	})
 	const [currentPage, setCurrentPage] = useState(1)
+	const [gblSearchValue, setGblSearchValue] = useState('')
+	const debounceGblSearch = useDebounce(
+		gblSearchValue,
+		globalSearchConfig?.debounceDelay ?? DEFAULT_GLOBAL_SEARCH_DEBOUNCE,
+	)
+	/**
+	 * WARNING: All properties in tableConfig are persisted to localStorage.
+	 * Be mindful when adding new properties as they will increase storage usage
+	 * and will persist after full page reload.
+	 */
 	const [tableConfig, setTableConfig] = useState<TableConfigState<T>>(
 		loadStorage<T>(tableId, defaultFilters),
 	)
 	const tableHeight = useTableHeight(tableRef, !!displayResetFilters)
-	const tableHeader = useTableHeader({
-		resetFiltersButton: displayResetFilters ? (
-			<ResetFiltersButton
-				onClick={() => {
-					setTableConfig((prev) => ({ ...prev, filters: defaultFilters }))
-				}}
-			/>
-		) : null,
-		globalSearchInput,
-		showHeader: showHeader ?? false,
-		renderCallback: renderHeader,
-	})
 
 	const fetchParams: DataFetcherParams<T> = {
 		filters: tableConfig.filters,
 		sorter: tableConfig.sorter,
 		pagination: tableConfig.pagination,
 		currentPage,
-		globalSearch: globalSearchValue,
+		globalSearch: debounceGblSearch,
 		refetchTriggers,
 	}
 
@@ -114,7 +106,27 @@ export function Table<T extends AnyObject, C extends readonly ColumnType<T>[] = 
 
 	return (
 		<>
-			{tableHeader}
+			{showHeader &&
+				renderTableHeader({
+					globalSearch: {
+						enabled: !!globalSearchConfig,
+						searchedFields: globalSearchConfig?.searchedFields ?? [],
+						setValue: setGblSearchValue,
+						value: gblSearchValue,
+					},
+					resetFilters: {
+						enabled: !!displayResetFilters,
+						onClick: () => setTableConfig((prev) => ({ ...prev, filters: defaultFilters })),
+					},
+					renderCallback: renderHeader
+						? renderHeader
+						: (globalSearchNode, resetFiltersNode) => (
+								<>
+									{globalSearchNode}
+									{resetFiltersNode}
+								</>
+							),
+				})}
 			<AntdTable<T>
 				{...restProps}
 				ref={tableRef}

@@ -27,11 +27,34 @@ export const Example: StoryObj<typeof Table<DataType>> = {
 		displayResetFilters: true,
 		showHeader: true,
 		columns,
-		dataSource: async ({ filters, sorter, pagination, currentPage }) => {
-			const filterQuery = `${filters?.id ? '&id=' + filters.id : ''}${filters?.userId ? '&userId=' + filters.userId : ''}${filters?.title ? '&title_like=' + filters.title : ''}${filters?.body ? '&body_like=' + filters.body : ''}`
-			const sorterQuery = sorter ? '&_sort=' + sorter.field : '&_sort=id'
-			const query = `?_page=${currentPage}&_limit=${pagination?.size}${sorterQuery}${filterQuery}`
-			const res = await fetch(`https://jsonplaceholder.typicode.com/posts${query}`)
+		dataSource: async ({ filters, sorter, pagination, currentPage, globalSearch }) => {
+			const urlParams = new URLSearchParams()
+
+			// Pagination
+			urlParams.append('_page', String(currentPage))
+			urlParams.append('_limit', String(pagination?.size))
+
+			// Global search and filters
+			if (globalSearch) {
+				urlParams.append('q', globalSearch)
+			} else {
+				if (filters?.userId) {
+					urlParams.append('userId', String(filters.userId))
+				}
+
+				if (filters?.title) {
+					urlParams.append('title_like', String(filters.title))
+				}
+
+				if (filters?.body) {
+					urlParams.append('body_like', String(filters.body))
+				}
+			}
+
+			// Sorter
+			urlParams.append('sort', sorter ? sorter.field : 'id')
+
+			const res = await fetch(`https://jsonplaceholder.typicode.com/posts/?${urlParams.toString()}`)
 			const totalCount = Number(res.headers.get('x-total-count'))
 			const data = (await res.json()) as Array<{
 				id: number
